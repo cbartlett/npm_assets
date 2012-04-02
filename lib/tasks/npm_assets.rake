@@ -1,11 +1,11 @@
 namespace :npm_assets do
-  
+
   desc "go thru all the coffee files, look for require_npm and add dependencies to package.json"
   task :build_package_json => :environment do
     npms = []
     FileList["app/assets/javascripts/**/*.coffee", "spec/javascripts/**/*.coffee"].each do |f|
       File.new(f).each_line do |line|
-        match = line.match(/^#=\s+require_npm\s+([\w_-]*)/)
+        match = line.match(/^#=\s+require_npm\s+([\w\._-]*)/)
         npms << match[1] if match
       end
     end
@@ -20,7 +20,7 @@ namespace :npm_assets do
     end
     File.open("package.json", "w")  { |f| f.puts pkg.to_json }
   end
-  
+
   desc "run npm install"
   task :install => :build_package_json do
     exec "npm install"
